@@ -1,46 +1,42 @@
-if (currentURL.indexOf('/gradebook/speed_grader?') > -1) {createToDoButton ();} //Only run the following script in the Speedgrade page
+//Full To Do List \\
 
-function createToDoButton () {
-	html = '<button type="button" class="Button Button--primary" id="btn_todolist"><i class="icon-solid icon-notepad" aria-hidden="true" /> Full To Do List</button>' //html button
-	$('#speed_grader_settings_mount_point').after(html);	//add the button 'after' class speed_grader_settings_mount_point
-	document.getElementById('btn_todolist').addEventListener("click", openToDoDialog); //add on Click event listener to the button
-}
+var assignments_query
+var quizzes_query
 
-function openToDoDialog () {
-html='<div id="tododialog" title="Full To Do List"><div id="msg_todolist"><p><strong>To Do list is loading. Please wait!  <i class="icon-progress" aria-hidden="true"/> </strong></p></div><button type="button" class="Button Button--secondary" id="btn_refreshToDo"><i class="icon-solid icon-refresh" aria-hidden="true" /> Refresh ungraded list</button><table id="todolist" class="table table-bordered" style="width:100%" cellspacing="0"><thead></thead></table></div>'
-$('.ic-app').after(html);
-document.querySelector('#btn_refreshToDo').addEventListener("click", refreshToDoList);
-document.querySelector('#btn_refreshToDo').style.display = 'none';
+	quizzes_query =
+        `{
+  allCourses {
+    name
+    _id
+    submissionsConnection(filter: {states: pending_review}) {
+      nodes {
+        gradingStatus
+        submissionStatus
+        submittedAt
+        state
+        assignment {
+          _id
+          name
+        }
+        user {
+          _id
+          name
+          sisId
+          email
+          enrollments {
+            state
+            course {
+              _id
+            }
+          }
+        }
+      }
+    }
+  }
+}`;
 
-//create a dialog using jQuery
-(function() {
-$('#tododialog').dialog({width: $(window).width(), height:$(window).height(), //Make the dialog full screen
-close: function( event, ui ) {closetodo();}})
-}());
 
-//Load required libraries to display data
-		var css = "https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.11.3/b-2.2.1/b-html5-2.2.1/b-print-2.2.1/kt-2.6.4/sp-1.4.0/sl-1.3.4/datatables.min.css";
-		$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', css) );
-		
-		var js = "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js";
-		$.getScript( js, function( data, textStatus, jqxhr ) {
-				//console.log( "MomentJS loaded" );	
-			});
-		var js = "https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.11.3/b-2.2.1/b-html5-2.2.1/b-print-2.2.1/kt-2.6.4/sp-1.4.0/sl-1.3.4/datatables.min.js";
-		$.getScript( js, function( data, textStatus, jqxhr ) {
-				 //console.log( "DataTables loaded" );
-				 GetTodoList();		
-			
-});
-
-}
-
-//Get the To Do list via GraphQL
-function GetTodoList() {
-    var query
-    var tdlist_filtered
-
-    query =
+	assignments_query =
         `{
   allCourses {
     name
@@ -72,7 +68,64 @@ function GetTodoList() {
   }
 }`;
 
-    $.ajax({
+
+
+if (location.pathname == "/") {
+if (ENV.current_user_roles.indexOf('teacher') > -1) {
+var checkExist = setInterval(function() {
+   if ($('.todo-list-header').length) {
+    html = '<button type="button" class="Button Button--primary" id="todoshortcut"><i class="icon-not-graded" aria-hidden="true"/> Pending Marking</button>'	
+	$('.todo-list-header').after(html);
+	document.getElementById('todoshortcut').addEventListener("click", opentodo);
+      clearInterval(checkExist);
+   }
+}, 500);
+}
+}
+
+
+function todoShortcut () {
+	html = '<button type="button" class="Button Button--primary" id="todoshortcut"><i class="icon-not-graded" aria-hidden="true"/>Pending Marking</button>'
+	$('#speed_grader_settings_mount_point').after(html);	
+	document.getElementById('todoshortcut').addEventListener("click", opentodo);
+}
+
+function opentodo () {
+html='<div id="tododialog" title="Pending Marking"><div id="msg_todolist"><p><strong>To Do list is loading. Please wait!  <i class="icon-progress" aria-hidden="true"/> </strong></p></div><button type="button" class="Button Button--secondary" id="btn_refreshToDo"><i class="icon-solid icon-refresh" aria-hidden="true" /> Refresh ungraded list</button><table id="todolist" class="table table-bordered" style="width:100%" cellspacing="0"><thead></thead></table></div>'
+$('.ic-app').after(html);
+document.querySelector('#btn_refreshToDo').addEventListener("click", refreshToDoList);
+document.querySelector('#btn_refreshToDo').style.display = 'none';
+(function() {
+$('#tododialog').dialog({width: $(window).width(), height:$(window).height(), close: function( event, ui ) {closetodo();}})
+}());
+
+
+		var css = "https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-html5-2.4.2/b-print-2.4.2/kt-2.10.0/sp-2.2.0/sl-1.7.0/datatables.min.css";
+		$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', css) );
+		
+		var js = "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js";
+		$.getScript( js, function( data, textStatus, jqxhr ) {
+				//console.log( "MomentJS loaded" );	
+			});
+		var js = "https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-html5-2.4.2/b-print-2.4.2/kt-2.10.0/sp-2.2.0/sl-1.7.0/datatables.min.js";
+		         
+		$.getScript( js, function( data, textStatus, jqxhr ) {
+				 //console.log( "DataTables loaded" );
+				CreateTodoListTable();
+
+
+				 
+			
+});
+
+}
+
+function GetTodoList(query) {
+    var tdlist_filtered
+
+    return new Promise((resolve, reject) => {
+    // Simulate an asynchronous operation
+    setTimeout(() => { $.ajax({
         url: '/api/graphql',
         type: 'POST',
         data: {
@@ -83,20 +136,27 @@ function GetTodoList() {
         },
 
         success: function(result, status, xhr) {
-            tdlist_filtered = result.data.allCourses.filter(d => d.submissionsConnection.nodes.length !== 0); //Remove blank results
-            CreateTodoListArray(tdlist_filtered)
-            //console.log(tdlist_filtered)
+            tdlist_filtered = result.data.allCourses.filter(d => d.submissionsConnection.nodes.length !== 0);
+            console.log(tdlist_filtered);
+			
+			
+
+      resolve(CreateTodoListArray(tdlist_filtered));
+
+            
 
         },
         error: function() {},
     });
+	
+	    }, 500);
+  });
 
 }
 
-//Add results to an Array
 function CreateTodoListArray(data) {
 
-    //console.log(data)
+    console.log(data)
     var requests = 0;
     var todolist = [];
     var classlist = 0;
@@ -108,10 +168,10 @@ function CreateTodoListArray(data) {
         //console.log('current class', classlist)
         submissionlist = 0;
         for (submissionlist = 0; submissionlist < data[classlist].submissionsConnection.nodes.length; submissionlist++) {
-            console.log('length of node', data[classlist].submissionsConnection.nodes.length)
-            console.log('current submission', submissionlist)
+            //console.log('length of node', data[classlist].submissionsConnection.nodes.length)
+            //console.log('current submission', submissionlist)
             for (enrolmentlist = 0; enrolmentlist < data[classlist].submissionsConnection.nodes[submissionlist].user.enrollments.length; enrolmentlist++) {
-                if (data[classlist].submissionsConnection.nodes[submissionlist].user.enrollments[enrolmentlist].course._id == data[classlist]._id && data[classlist].submissionsConnection.nodes[submissionlist].user.enrollments[enrolmentlist].state == 'active') {
+                if (data[classlist].submissionsConnection.nodes[submissionlist].user.enrollments[enrolmentlist].course._id == data[classlist]._id && data[classlist].submissionsConnection.nodes[submissionlist].user.enrollments[enrolmentlist].state == 'active' && data[classlist].submissionsConnection.nodes[submissionlist].user.name !== 'Test Student' && /Demo\b/.test(data[classlist].name) == false ) {
                     todolist.push({
                         coursename: data[classlist].name,
                         stdname: data[classlist].submissionsConnection.nodes[submissionlist].user.name,
@@ -130,12 +190,16 @@ function CreateTodoListArray(data) {
 
 
     }
-    CreateTodoListTable(todolist);
+    return todolist;
 }
 
-//Using DataTable library to create table and display the data
-function CreateTodoListTable(data) {
-    //console.log(data);
+async function CreateTodoListTable() {
+
+const [quiz, assignment] = await Promise.all([GetTodoList(quizzes_query), GetTodoList(assignments_query)]);
+
+    //console.log(quiz);
+	//console.log(assignment);
+	var combinedArray = quiz.concat(assignment);
     var table;
    document.getElementById("msg_todolist").style.display = 'none';
    document.querySelector('#btn_refreshToDo').style.display = 'block';
@@ -155,9 +219,13 @@ function CreateTodoListTable(data) {
         $tr.appendTo('#todolist thead');
     }
 
+
+
+
+
     table = $('#todolist').DataTable({
 
-        data: data,
+        data: combinedArray,
         "lengthMenu": [20, 50, 100],
         "ordering": true,
         "order": [
@@ -176,7 +244,8 @@ function CreateTodoListTable(data) {
                 visible: false
             },
             {
-                data: "stdemail"
+                data: "stdemail",
+				visible: false
             },
             {
                 data: "assname"
@@ -210,7 +279,7 @@ function CreateTodoListTable(data) {
             {
                 targets: 7,
                 render: function(data, type, row, meta) {
-                    return '<a href="' + data + '"target=”_blank”>' + data + '</a>';
+                    return '<a href="' + data + '"target=_blank>' + data + '</a>';
                 }
             }
         ],
@@ -248,9 +317,11 @@ console.log("ToDo List Refreshed");
     if ($.fn.DataTable.isDataTable('#todolist')) {
         $('#todolist').DataTable().clear().destroy();
         $('#todolist').find('tr').remove();
-        GetTodoList();
+        CreateTodoListTable();
    document.getElementById("msg_todolist").style.display = 'block';
    document.querySelector('#btn_refreshToDo').style.display = 'none';
     }
 
 }
+
+//Full To Do List\\
