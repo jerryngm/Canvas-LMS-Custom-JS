@@ -4,7 +4,6 @@
 // @description dashboard full todo list
 //
 **/
-// todo: filter terms - 1 way or another (query or ui)
 (function () {
   'use strict';
 
@@ -203,12 +202,13 @@
                 todolist.push({
                   coursename: data[classlist].name,
                   stdname: data[classlist].submissionsConnection.nodes[submissionlist].user.name,
-                  stdvtid: data[classlist].submissionsConnection.nodes[submissionlist].user.sisId,
+                  sisid: data[classlist].submissionsConnection.nodes[submissionlist].user.sisId,
                   stdemail: data[classlist].submissionsConnection.nodes[submissionlist].user.email,
                   assname: data[classlist].submissionsConnection.nodes[submissionlist].assignment.name,
                   submittedat: data[classlist].submissionsConnection.nodes[submissionlist].submittedAt,
                   daysince: moment().diff(data[classlist].submissionsConnection.nodes[submissionlist].submittedAt, 'days'),
-                  speedgrader: canvas_url + '/courses/' + data[classlist]._id + '/gradebook/speed_grader?assignment_id=' + data[classlist].submissionsConnection.nodes[submissionlist].assignment._id + '&student_id=' + data[classlist].submissionsConnection.nodes[submissionlist].user._id
+                  speedgrader: canvas_url + '/courses/' + data[classlist]._id + '/gradebook/speed_grader?assignment_id=' + data[classlist].submissionsConnection.nodes[submissionlist].assignment._id + '&student_id=' + data[classlist].submissionsConnection.nodes[submissionlist].user._id,
+                  term: data[classlist].term.name
                 })
               }
             }
@@ -236,6 +236,7 @@
         function setHeader() {
           var $tr = $('<tr>');
           $tr.append($('<th>').text("Course Name"));
+		      $tr.append($('<th>').text("Term"));
           $tr.append($('<th>').text("Student Name"));
           $tr.append($('<th>').text("Student ID"));
           $tr.append($('<th>').text("Student Email"));
@@ -251,35 +252,46 @@
           "lengthMenu": [20, 50, 100],
           "ordering": true,
           "order": [
-            [6, "desc"]
+            [8, "desc"]
           ],
           "processing": true,
           destroy: true,
-          "columns": [{
+//Change column visibility here\\
+			"columns": [{
               data: "coursename",
+			        visible: true
             },
             {
-              data: "stdname"
+              data: "term",
+			        visible: true
             },
             {
-              data: "stdvtid",
-              visible: false
+              data: "stdname",
+			        visible: true
+            },
+            {
+              data: "sisid",
+              visible: true
             },
             {
               data: "stdemail",
               visible: false
             },
             {
-              data: "assname"
+              data: "assname",
+			        visible: true
             },
             {
-              data: "submittedat"
+              data: "submittedat",
+			        visible: true
             },
             {
-              data: "daysince"
+              data: "daysince",
+			        visible: true
             },
             {
-              data: "speedgrader"
+              data: "speedgrader",
+			        visible: true
             }
           ],
           keys: true,
@@ -289,7 +301,7 @@
             columns: [0]
           },
           "columnDefs": [{
-              targets: [5],
+              targets: [6],
               data: "submittedat",
               render: function (data, _type, _row, _meta) {
                 moment.updateLocale(moment.locale(), {
@@ -299,7 +311,7 @@
               }
             },
             {
-              targets: 7,
+              targets: 8,
               render: function (data, _type, _row, _meta) {
                 return `<a href="${data}" target="_blank">Go to <i class="icon-line icon-speed-grader" aria-hidden="true" /></a>`;
               }
