@@ -236,7 +236,7 @@
         function setHeader() {
           var $tr = $('<tr>');
           $tr.append($('<th>').text("Course Name"));
-		      $tr.append($('<th>').text("Term"));
+	  $tr.append($('<th>').text("Term"));
           $tr.append($('<th>').text("Student Name"));
           $tr.append($('<th>').text("Student ID"));
           $tr.append($('<th>').text("Student Email"));
@@ -252,7 +252,7 @@
           "lengthMenu": [20, 50, 100],
           "ordering": true,
           "order": [
-            [8, "desc"]
+            [7, "desc"]
           ],
           "processing": true,
           destroy: true,
