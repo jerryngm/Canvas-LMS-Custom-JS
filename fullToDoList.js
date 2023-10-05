@@ -91,7 +91,7 @@
 
       var checkExist = setInterval(function () {
         if (!document.getElementById('todoshortcut')) {
-          var html = '<button type="button" class="Button Button--primary" id="todoshortcut"><i class="icon-not-graded" aria-hidden="true"/>Pending Marking</button>'
+          var html = '<button type="button" class="Button Button--primary" id="todoshortcut"><i class="icon-not-graded" aria-hidden="true"></i>Pending Marking</button>'
           $('.todo-list-header').after(html);
           document.getElementById('todoshortcut').addEventListener("click", opentodo);
           clearInterval(checkExist);
@@ -113,9 +113,9 @@
       function opentodo() {
         var html = `<div id="tododialog" title="Pending Marking">
           <div id="msg_todolist">
-            <p><strong>To Do list is loading. Please wait! <i class="icon-progress" aria-hidden="true" /></strong></p>
+            <p><strong>To Do list is loading. Please wait! <i class="icon-progress" aria-hidden="true"></i></strong></p>
           </div><button type="button" class="Button Button--secondary" id="btn_refreshToDo"><i class="icon-solid icon-refresh"
-              aria-hidden="true" /> Refresh ungraded list</button>
+              aria-hidden="true"></i> Refresh ungraded list</button>
           <table id="todolist" class="table table-bordered" style="width:100%" cellspacing="0">
             <thead></thead>
           </table>
@@ -313,7 +313,7 @@
             {
               targets: 8,
               render: function (data, _type, _row, _meta) {
-                return `<a href="${data}" target="_blank">Go to <i class="icon-line icon-speed-grader" aria-hidden="true" /></a>`;
+                return `<a href="${data}" target="_blank">Go to <i class="icon-line icon-speed-grader" aria-hidden="true"></i></a>`;
               }
             }
           ],
