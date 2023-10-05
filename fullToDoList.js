@@ -107,7 +107,8 @@
 
       $.getScript(fullTodoList.assets.datatables, function (_d, _t, _x) {
         console.log("DataTables loaded");
-	 if (!document.getElementById('todoshortcut')) {
+	 var checkExist = setInterval(function () {
+	      if (!document.getElementById('todoshortcut')) {
           var html = '<button type="button" class="Button Button--primary" id="todoshortcut"><i class="icon-not-graded" aria-hidden="true"></i>Pending Marking</button>'
           $('.todo-list-header').after(html);
           document.getElementById('todoshortcut').addEventListener("click", opentodo);
