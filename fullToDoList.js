@@ -89,14 +89,15 @@
         }
       };
 
-      var checkExist = setInterval(function () {
-        if (!document.getElementById('todoshortcut')) {
-          var html = '<button type="button" class="Button Button--primary" id="todoshortcut"><i class="icon-not-graded" aria-hidden="true"></i>Pending Marking</button>'
-          $('.todo-list-header').after(html);
-          document.getElementById('todoshortcut').addEventListener("click", opentodo);
-          clearInterval(checkExist);
-        }
-      }, 500);
+// move to getScript for datatable js
+//      var checkExist = setInterval(function () {
+//        if (!document.getElementById('todoshortcut')) {
+//          var html = '<button type="button" class="Button Button--primary" id="todoshortcut"><i class="icon-not-graded" aria-hidden="true"></i>Pending Marking</button>'
+//          $('.todo-list-header').after(html);
+//          document.getElementById('todoshortcut').addEventListener("click", opentodo);
+//          clearInterval(checkExist);
+//        }
+//      }, 500);
 
       $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', fullTodoList.assets.css));
 
@@ -106,6 +107,13 @@
 
       $.getScript(fullTodoList.assets.datatables, function (_d, _t, _x) {
         console.log("DataTables loaded");
+	 if (!document.getElementById('todoshortcut')) {
+          var html = '<button type="button" class="Button Button--primary" id="todoshortcut"><i class="icon-not-graded" aria-hidden="true"></i>Pending Marking</button>'
+          $('.todo-list-header').after(html);
+          document.getElementById('todoshortcut').addEventListener("click", opentodo);
+          clearInterval(checkExist);
+        	}
+      	}, 500);
         // move this to opentodo() before refresh, allow refresh from Pending Markings
         //CreateTodoListTable();
       });
